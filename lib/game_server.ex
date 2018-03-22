@@ -43,7 +43,7 @@ defmodule GameServer do
 
         ExPNG.read("example.png")
         |> ExPNG.encode
-        |> GameServer.Sender.send_to(socket)
+        |> GameServer.Sender.sent_bits_to(socket)
 
       {:error, error} ->
          GameServer.ErrorHandler.process(socket, clients_pid, id, error)

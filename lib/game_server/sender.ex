@@ -3,6 +3,10 @@ defmodule GameServer.Sender do
     :gen_tcp.send(client, "#{line}\r\n")
   end
 
+  def sent_bits_to(bits, client) do
+    :gen_tcp.send(client, bits)
+  end
+
   def send_except(line, clients_pid, except_id) do
     clients_pid
     |> GameServer.Clients.get_except(except_id)
