@@ -39,13 +39,12 @@ defmodule GameServer do
   defp serve(socket, clients_pid, id, picture_state) do
     case read_line(socket) do
       {:ok, data} ->
-        GameServer.Message.parse(data)
-        #|> GameServer.Command.run(picture_state)
+        Logger.info("LALALALAAL_______--------------")
 
-        Logger.info "#{id}. #{data}"
+        ExPNG.read("example.png")
+        |> ExPNG.encode
+        |> GameServer.Sender.send_to(socket)
 
-
-        GameServer.Sender.send_except(data, clients_pid, id)
       {:error, error} ->
          GameServer.ErrorHandler.process(socket, clients_pid, id, error)
     end
