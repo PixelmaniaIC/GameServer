@@ -9,7 +9,7 @@ defmodule GameServer.Sender do
     |> Enum.each(&send_to(line, &1))
   end
 
-  def broadcast(line, clients) do
+  def broadcast(_line, _clients) do
     :not_implemented!
   end
 end
