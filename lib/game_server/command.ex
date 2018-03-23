@@ -13,7 +13,7 @@ defmodule GameServer.Command do
   end
 
   def picture_state(cubes, id) do
-    {:ok, json_cubes} = JSON.encode(cubes)
+    {:ok, json_cubes} = JSON.encode(%{cubes: cubes})
     %{
       playerId: id,
       networkName: "ImageInitializer",
