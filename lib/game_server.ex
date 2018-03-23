@@ -9,9 +9,10 @@ defmodule GameServer do
                       [:binary, packet: :line, active: false, reuseaddr: true])
 
     {:ok, clients_pid} = GameServer.Clients.start_link()
-    {:ok, picture_state} = GameServer.PictureColor.start_link()
+    picture_state = PictureProcess.process(4)
     {:ok, id_counter} = GameServer.IDCounter.start_link()
 
+    IO.inspect(picture_state)
     Logger.info "Accepting connections on port #{port}"
     loop_acceptor(socket, clients_pid, picture_state, id_counter)
   end
@@ -28,6 +29,15 @@ defmodule GameServer do
     {:ok, json} = JSON.encode(message);
     GameServer.Sender.send_to(json, client)
 
+    :timer.sleep(1000)
+
+    # WILL DELETE: GIVE URL TO USER
+    url = PictureProcess.get_url
+    {:ok, json} =
+      GameServer.Command.image_url(url, id)
+      |> JSON.encode
+    GameServer.Sender.send_to(json, client)
+
     {:ok, pid} = Task.Supervisor.start_child(GameServer.TaskSupervisor,
                                               fn -> serve(client, clients_pid, id, picture_state) end)
 
@@ -39,7 +49,7 @@ defmodule GameServer do
   defp serve(socket, clients_pid, id, picture_state) do
     case read_line(socket) do
       {:ok, data} ->
-        GameServer.Message.parse(data)
+        #GameServer.Message.parse(data)
         #|> GameServer.Command.run(picture_state)
 
         Logger.info "#{id}. #{data}"

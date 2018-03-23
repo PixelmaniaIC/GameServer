@@ -8,6 +8,10 @@ defmodule GameServer.Command do
     GameServer.PictureColor.put(picture_state, {r, g, b})
   end
 
+  def image_url(url, id) do
+    %{playerId: id, networkName: "UrlReceiver", payload: url}
+  end
+
   def set_id(id) do
     %GameServer.Message{playerId: id, networkName: "PlayerIdProcessor"}
   end
