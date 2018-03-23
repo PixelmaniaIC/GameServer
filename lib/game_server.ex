@@ -38,6 +38,19 @@ defmodule GameServer do
       |> JSON.encode
     GameServer.Sender.send_to(json, client)
 
+    :timer.sleep(1000)
+
+    # WILL DELETE: GIVE PICTURE STATE TO USER
+    message =
+      Enum.reduce(0..15, [], fn(index, list) ->
+        [PictureProcess.State.get(picture_state, index) | list ] end)
+      |> GameServer.Command.picture_state(id)
+
+    {:ok, json} = JSON.encode(message)
+    GameServer.Sender.send_to(json, client)
+
+
+
     {:ok, pid} = Task.Supervisor.start_child(GameServer.TaskSupervisor,
                                               fn -> serve(client, clients_pid, id, picture_state) end)
 

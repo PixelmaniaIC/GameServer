@@ -12,6 +12,15 @@ defmodule GameServer.Command do
     %{playerId: id, networkName: "UrlReceiver", payload: url}
   end
 
+  def picture_state(cubes, id) do
+    {:ok, json_cubes} = JSON.encode(cubes)
+    %{
+      playerId: id,
+      networkName: "ImageInitializer",
+      payload: json_cubes
+    }
+  end
+
   def set_id(id) do
     %GameServer.Message{playerId: id, networkName: "PlayerIdProcessor"}
   end
