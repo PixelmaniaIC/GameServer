@@ -49,16 +49,6 @@ defmodule PictureProcess.Fragment do
     |> Enum.reverse
   end
 
-  defp conv(color) do
-    Map.keys(color)
-    |> Enum.filter(fn(key) -> key != :__struct__ end)
-    |> Enum.reduce(color, fn(key, acc) -> %{ acc | key => 3 } end)
-  end
-
-  defp bits_to_tuple(<<r, g, b, a>>) do
-    {r, g, b, a}
-  end
-
   defp sum_color(atom, map1, map2) do
     Map.get(map1, atom) + Map.get(map2, atom)
   end

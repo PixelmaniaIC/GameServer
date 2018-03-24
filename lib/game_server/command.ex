@@ -3,10 +3,6 @@ defmodule GameServer.Command do
     Poison.decode!(json, as: %GameServer.Message{})
   end
 
-  def run(command, picture_state) do
-    :not_implemented!
-  end
-
   def image_url(url, id) do
     %{playerId: id, networkName: "UrlReceiver", payload: url}
   end
