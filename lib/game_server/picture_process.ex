@@ -3,6 +3,7 @@ defmodule PictureProcess do
   alias PictureProcess.State, as: State
   alias PictureProcess.Color, as: Color
 
+  # TODO: rewrite, this function do many actions 
   def process(n) do
 
     Application.ensure_all_started :inets

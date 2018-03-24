@@ -2,31 +2,49 @@ defmodule GameServer do
   require Logger
 
   alias GameServer.Constants, as: Constants
+  alias GameServer.StatesKeeper, as: StatesKeeper
 
   def accept(port) do
     {:ok, socket} = :gen_tcp.listen(port,
                       [:binary, packet: :line, active: false, reuseaddr: true])
 
+    # Initialize states
+    states = %{}
+    # Client ids
     {:ok, clients_pid} = GameServer.Clients.start_link()
+    states = Map.put(states, "clients_pid", clients_pid)
+    # Picture state
     picture_state = Constants.picture_side() |> PictureProcess.process()
+    states = Map.put(states, "picture_state", picture_state)
+    # Id counter
     {:ok, id_counter} = GameServer.IDCounter.start_link()
+    states = Map.put(states, "id_counter", id_counter)
+    # leaderboard
+    {:ok, leaderboard} = GameServer.Leaderboard.start_link()
+    states = Map.put(states, "leaderboard", leaderboard)
 
-    IO.inspect(picture_state)
+    IO.inspect(states)
     Logger.info "Accepting connections on port #{port}"
-    loop_acceptor(socket, clients_pid, picture_state, id_counter)
+    loop_acceptor(socket, states)
   end
 
-  defp loop_acceptor(socket, clients_pid, picture_state, id_counter) do
+  defp loop_acceptor(socket, states) do
     {:ok, client} = :gen_tcp.accept(socket)
 
-    id = GameServer.IDCounter.generate_id(id_counter)
-    GameServer.Clients.put(clients_pid, id, client)
+    id = StatesKeeper.id_counter(states) |> GameServer.IDCounter.generate_id()
+    StatesKeeper.leaderboard(states) |> GameServer.Leaderboard.new_player(id)
+
+    StatesKeeper.clients_pid(states) |> GameServer.Clients.put(id, client)
     Logger.info "new connection with #{id}"
 
     # WILL DELETE: GIVE ID TO USER
     message = GameServer.Command.set_id(id)
     {:ok, json} = JSON.encode(message);
     GameServer.Sender.send_to(json, client)
+
+    # WILL DELETE: ADD USER TO LEADERBOARD
+    StatesKeeper.leaderboard(states)
+    |> GameServer.Leaderboard.new_player(id)
 
     :timer.sleep(1000)
 
@@ -40,38 +58,40 @@ defmodule GameServer do
     :timer.sleep(1000)
 
     # WILL DELETE: GIVE PICTURE STATE TO USER
+    picture_state = StatesKeeper.picture_state(states)
     message =
       (0..Constants.picture_parts)
       |> Enum.reduce([], fn(index, list) ->
         [PictureProcess.State.get(picture_state, index) | list ] end)
-      |> GameServer.Command.picture_state(id)
+      |> GameServer.Command.set_picture_state(id)
 
     {:ok, json} = JSON.encode(message)
     GameServer.Sender.send_to(json, client)
 
     {:ok, pid} = Task.Supervisor.start_child(GameServer.TaskSupervisor,
-                                              fn -> serve(client, clients_pid, id, picture_state) end)
+                                              fn -> serve(client, id, states) end)
 
     :ok = :gen_tcp.controlling_process(client, pid)
-    loop_acceptor(socket, clients_pid, picture_state, id_counter)
+    loop_acceptor(socket, states)
   end
 
   # Тут будем парсить тип комманды и реагировать
-  defp serve(socket, clients_pid, id, picture_state) do
+  defp serve(socket, id, states) do
+    clients_pid = StatesKeeper.clients_pid(states)
+
     case read_line(socket) do
       {:ok, data} ->
-        #GameServer.Message.parse(data)
-        #|> GameServer.Command.run(picture_state)
+        GameServer.Message.parse(data)
+        |> GameServer.Receiver.receive(states)
 
         Logger.info "#{id}. #{data}"
 
-
-        GameServer.Sender.send_except(data, clients_pid, id)
+        GameServer.Sender.broadcast(data, clients_pid)
       {:error, error} ->
          GameServer.ErrorHandler.process(socket, clients_pid, id, error)
     end
 
-    serve(socket, clients_pid, id, picture_state)
+    serve(socket, id, states)
   end
 
   defp read_line(socket) do

@@ -4,17 +4,16 @@ defmodule GameServer.Command do
   end
 
   def run(command, picture_state) do
-    %{:playerId => _, :r => r, :g => g, :b => b} = command
-    GameServer.PictureColor.put(picture_state, {r, g, b})
+    :not_implemented!
   end
 
   def image_url(url, id) do
     %{playerId: id, networkName: "UrlReceiver", payload: url}
   end
 
-  def picture_state(cubes, id) do
+  def set_picture_state(cubes, id) do
     {:ok, json_cubes} = JSON.encode(%{cubes: cubes})
-    %{
+    %GameServer.Message{
       playerId: id,
       networkName: "ImageInitializer",
       payload: json_cubes
@@ -25,10 +24,11 @@ defmodule GameServer.Command do
     %GameServer.Message{playerId: id, networkName: "PlayerIdProcessor"}
   end
 
-  # TODO: must rewrite
-  def change_color(id, {r, g, b}) do
-    %GameServer.Message{playerId: id,
-                        networkName: "ColorChanger",
-                        payload: JSON.decode(%{r: r, g: g, b: b})}
+  def change_color(id, index, {r, g, b}) do
+    %GameServer.Message{
+      playerId: id,
+      networkName: "ColorChanger",
+      payload: JSON.decode(%{r: r, g: g, b: b})
+    }
   end
 end
