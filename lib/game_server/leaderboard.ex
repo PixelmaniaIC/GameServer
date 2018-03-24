@@ -7,7 +7,6 @@ defmodule GameServer.Leaderboard do
 
   def new_player(bucket, key) do
     Agent.update(bucket, &Map.put(&1, key, 0))
-    IO.puts "I'M HERE #{key} #{Agent.get(bucket, &Map.get(&1, key))}"
   end
 
   def update(bucket, key, d_score) do
