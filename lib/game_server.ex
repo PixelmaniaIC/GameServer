@@ -10,7 +10,7 @@ defmodule GameServer do
 
     # Initialize states
     states = StatesKeeper.inialize()
-    
+
     IO.inspect(states)
     Logger.info "Accepting connections on port #{port}"
     loop_acceptor(socket, states)
@@ -25,25 +25,24 @@ defmodule GameServer do
     StatesKeeper.clients_pid(states) |> GameServer.Clients.put(id, client)
     Logger.info "new connection with #{id}"
 
+    init_commands = []
     # WILL DELETE: GIVE ID TO USER
     message = GameServer.Command.set_id(id)
-    {:ok, json} = JSON.encode(message);
-    GameServer.Sender.send_to(json, client)
+    {:ok, set_id} = JSON.encode(message);
+    init_commands = List.insert_at(init_commands, -1, set_id)
+    #GameServer.Sender.send_to(json, client)
 
     # WILL DELETE: ADD USER TO LEADERBOARD
     StatesKeeper.leaderboard(states)
     |> GameServer.Leaderboard.new_player(id)
 
-    :timer.sleep(1000)
-
     # WILL DELETE: GIVE URL TO USER
     url = PictureProcess.get_url
-    {:ok, json} =
+    {:ok, set_img_url} =
       GameServer.Command.image_url(url, id)
       |> JSON.encode
-    GameServer.Sender.send_to(json, client)
 
-    :timer.sleep(1000)
+    init_commands = List.insert_at(init_commands, -1, set_img_url)
 
     # WILL DELETE: GIVE PICTURE STATE TO USER
     picture_state = StatesKeeper.picture_state(states)
@@ -53,8 +52,10 @@ defmodule GameServer do
         [PictureProcess.State.get(picture_state, index) | list ] end)
       |> GameServer.Command.set_picture_state(id)
 
-    {:ok, json} = JSON.encode(message)
-    GameServer.Sender.send_to(json, client)
+    {:ok, set_pic_parts} = JSON.encode(message)
+    init_commands = List.insert_at(init_commands, -1, set_pic_parts)
+    IO.inspect init_commands
+    GameServer.Sender.send_to(init_commands, client)
 
     {:ok, pid} = Task.Supervisor.start_child(GameServer.TaskSupervisor,
                                               fn -> serve(client, id, states) end)

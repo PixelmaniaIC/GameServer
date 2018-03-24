@@ -5,7 +5,12 @@ defmodule GameServer.Sender do
     broadcast(message, clients)
   end
 
-  def send_to(line, client) do
+  def send_to(message, client) when is_bitstring(message) do
+    :gen_tcp.send(client, "#{message}\r\n")
+  end
+
+  def send_to(message, client) when is_list(message) do
+    line = Enum.join(message, "\r\n")
     :gen_tcp.send(client, "#{line}\r\n")
   end
 
