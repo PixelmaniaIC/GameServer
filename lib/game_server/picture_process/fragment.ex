@@ -35,10 +35,10 @@ defmodule PictureProcess.Fragment do
     diviser = :math.pow(diff, 2) |> round
 
     %Color{
-      r: div(Map.get(color, :r), diviser),
-      g: div(Map.get(color, :g), diviser),
-      b: div(Map.get(color, :b), diviser),
-      a: div(Map.get(color, :a), diviser)
+      r: ((Map.get(color, :r) / diviser) |> round),
+      g: ((Map.get(color, :g) / diviser) |> round),
+      b: ((Map.get(color, :b) / diviser) |> round),
+      a: ((Map.get(color, :a) / diviser) |> round)
     }
   end
 

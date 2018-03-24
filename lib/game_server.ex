@@ -83,10 +83,11 @@ defmodule GameServer do
       {:ok, data} ->
         GameServer.Message.parse(data)
         |> GameServer.Receiver.receive(states)
+        |> GameServer.Sender.send
 
         Logger.info "#{id}. #{data}"
 
-        GameServer.Sender.broadcast(data, clients_pid)
+        #GameServer.Sender.broadcast(data, clients_pid)
       {:error, error} ->
          GameServer.ErrorHandler.process(socket, clients_pid, id, error)
     end

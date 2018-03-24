@@ -1,4 +1,10 @@
 defmodule GameServer.Sender do
+  def send({:broadcast, message, clients}) do
+    IO.puts "we are sending next message:"
+    IO.inspect message
+    broadcast(message, clients)
+  end
+
   def send_to(line, client) do
     :gen_tcp.send(client, "#{line}\r\n")
   end

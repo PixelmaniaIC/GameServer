@@ -12,6 +12,8 @@ defmodule GameServer.Receiver do
       |> GameServer.Leaderboard.to_points
 
     GameServer.Leaderboard.update(StatesKeeper.leaderboard(states), id, distance)
+    {:ok, json_message} = JSON.encode(GameServer.Command.change_color(id, payload))
+    {:broadcast, json_message, StatesKeeper.clients_pid(states)}
   end
 
   def receive(%Message{playerId: id, networkName: "NameSetter", payload: payload}, states) do

@@ -24,11 +24,11 @@ defmodule GameServer.Command do
     %GameServer.Message{playerId: id, networkName: "PlayerIdProcessor"}
   end
 
-  def change_color(id, index, {r, g, b}) do
+  def change_color(id, payload) do
     %GameServer.Message{
       playerId: id,
       networkName: "ColorChanger",
-      payload: JSON.decode(%{r: r, g: g, b: b})
+      payload: payload
     }
   end
 end
