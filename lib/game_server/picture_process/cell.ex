@@ -5,9 +5,9 @@ defmodule PictureProcess.Cell do
 
   def get_distance(%PictureProcess.Color{r: r1, g: g1, b: b1}, %Cell{r: r2, g: g2, b: b2, index: _}) do
     ## TODO: DELETE THIS GOVNO
-    r2 = r2 * 255 |> round()
-    g2 = g2 * 255 |> round()
-    b2 = b2 * 255 |> round()
+    #r2 = r2 * 255 |> round()
+    #g2 = g2 * 255 |> round()
+    #b2 = b2 * 255 |> round()
 
     IO.puts "#{r1} #{r2} _____________"
     IO.puts "#{g1} #{g2} _____________"
