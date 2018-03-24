@@ -1,15 +1,14 @@
 defmodule GameServer do
   require Logger
 
-  @doc """
-  Starts accepting connections on the given `port`.
-  """
+  alias GameServer.Constants, as: Constants
+
   def accept(port) do
     {:ok, socket} = :gen_tcp.listen(port,
                       [:binary, packet: :line, active: false, reuseaddr: true])
 
     {:ok, clients_pid} = GameServer.Clients.start_link()
-    picture_state = PictureProcess.process(4)
+    picture_state = Constants.picture_side() |> PictureProcess.process()
     {:ok, id_counter} = GameServer.IDCounter.start_link()
 
     IO.inspect(picture_state)
@@ -42,14 +41,13 @@ defmodule GameServer do
 
     # WILL DELETE: GIVE PICTURE STATE TO USER
     message =
-      Enum.reduce(0..15, [], fn(index, list) ->
+      (0..Constants.picture_parts)
+      |> Enum.reduce([], fn(index, list) ->
         [PictureProcess.State.get(picture_state, index) | list ] end)
       |> GameServer.Command.picture_state(id)
 
     {:ok, json} = JSON.encode(message)
     GameServer.Sender.send_to(json, client)
-
-
 
     {:ok, pid} = Task.Supervisor.start_child(GameServer.TaskSupervisor,
                                               fn -> serve(client, clients_pid, id, picture_state) end)
