@@ -5,6 +5,12 @@ defmodule GameServer.Sender do
     broadcast(message, clients)
   end
 
+  def send({:except_sender, message, clients, id}) do
+    IO.puts "we are sending expect_one message:"
+    IO.inspect message
+    send_except(message, clients, id)
+  end
+
   def send_to(message, client) when is_bitstring(message) do
     :gen_tcp.send(client, "#{message}\r\n")
   end

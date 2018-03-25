@@ -20,7 +20,6 @@ defmodule GameServer do
     {:ok, client} = :gen_tcp.accept(socket)
 
     id = StatesKeeper.id_counter(states) |> GameServer.IDCounter.generate_id()
-    StatesKeeper.leaderboard(states) |> GameServer.Leaderboard.new_player(id)
 
     StatesKeeper.clients_pid(states) |> GameServer.Clients.put(id, client)
     Logger.info "new connection with #{id}"
@@ -30,11 +29,10 @@ defmodule GameServer do
     message = GameServer.Command.set_id(id)
     {:ok, set_id} = JSON.encode(message);
     init_commands = List.insert_at(init_commands, -1, set_id)
-    #GameServer.Sender.send_to(json, client)
 
     # WILL DELETE: ADD USER TO LEADERBOARD
-    StatesKeeper.leaderboard(states)
-    |> GameServer.Leaderboard.new_player(id)
+    #StatesKeeper.leaderboard(states)
+    #|> GameServer.UserState.new_player(id)
 
     # WILL DELETE: GIVE URL TO USER
     url = PictureProcess.get_url
@@ -64,19 +62,18 @@ defmodule GameServer do
     loop_acceptor(socket, states)
   end
 
-  # Тут будем парсить тип комманды и реагировать
   defp serve(socket, id, states) do
     clients_pid = StatesKeeper.clients_pid(states)
 
     case read_line(socket) do
       {:ok, data} ->
-        GameServer.Message.parse(data)
-        |> GameServer.Receiver.receive(states)
-        |> GameServer.Sender.send
-
         Logger.info "#{id}. #{data}"
 
-        #GameServer.Sender.broadcast(data, clients_pid)
+        GameServer.Message.parse(data)
+        |> GameServer.Receiver.receive(states)
+        |> IO.inspect
+        |> GameServer.Sender.send
+
       {:error, error} ->
          GameServer.ErrorHandler.process(socket, clients_pid, id, error)
     end

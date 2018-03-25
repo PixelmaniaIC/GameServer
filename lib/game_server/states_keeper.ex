@@ -16,8 +16,8 @@ defmodule GameServer.StatesKeeper do
     states = Map.put(states, "id_counter", id_counter)
 
     # leaderboard
-    {:ok, leaderboard} = GameServer.Leaderboard.start_link()
-    states = Map.put(states, "leaderboard", leaderboard)
+    {:ok, leaderboard} = GameServer.UserState.start_link()
+    Map.put(states, "leaderboard", leaderboard)
   end
 
   def id_counter(states), do: Map.get(states, "id_counter")

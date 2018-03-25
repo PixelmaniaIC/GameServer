@@ -11,12 +11,18 @@ defmodule GameServer.Receiver do
       |> PictureProcess.Cell.get_distance(user_cell)
       |> GameServer.Leaderboard.to_points
 
-    GameServer.Leaderboard.update(StatesKeeper.leaderboard(states), id, distance)
+    #TODO: Учесть случай, если игрок не послал своего имени
+    GameServer.UserState.update_score(StatesKeeper.leaderboard(states), id, distance)
     {:ok, json_message} = JSON.encode(GameServer.Command.change_color(id, payload))
     {:broadcast, json_message, StatesKeeper.clients_pid(states)}
   end
 
-  def receive(%Message{playerId: id, networkName: "NameSetter", payload: payload}, states) do
-    IO.puts "SET NAME"
+  def receive(%Message{playerId: id, networkName: "NameSetter", payload: name}, states) do
+    StatesKeeper.leaderboard(states)
+    |> GameServer.UserState.new_player(id, name)
+    IO.puts "RECEIVED NAME #{name}"
+
+    {:ok, json_message} = JSON.encode(GameServer.Command.add_user(id, name))
+    {:except_sender, json_message, StatesKeeper.clients_pid(states), id}
   end
 end

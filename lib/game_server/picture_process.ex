@@ -1,9 +1,8 @@
 defmodule PictureProcess do
   alias PictureProcess.Fragment, as: Fragment
   alias PictureProcess.State, as: State
-  alias PictureProcess.Color, as: Color
 
-  # TODO: rewrite, this function do many actions 
+  # TODO: rewrite, this function do many actions
   def process(n) do
 
     Application.ensure_all_started :inets
@@ -17,7 +16,7 @@ defmodule PictureProcess do
     |> Fragment.get_ranges(n)
 
     {:ok , changed_colors} = State.start_link
-    index = 0
+
     Enum.map(ranges, fn(range_y) ->
       Enum.map(ranges, fn(range_x) ->
           Fragment.pixel_sum(image, range_x, range_y)
