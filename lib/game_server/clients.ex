@@ -28,7 +28,11 @@ defmodule GameServer.Clients do
     Agent.get(bucket, &get_size(&1))
   end
 
-  def all_except(map, key) do
+  def get_all(bucket) do
+    Agent.get(bucket, &Map.values(&1))
+  end
+
+  defp all_except(map, key) do
     map
     |> Map.to_list
     |> Enum.filter(fn({k, _v}) -> k != key end )
