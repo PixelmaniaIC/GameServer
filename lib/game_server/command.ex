@@ -30,7 +30,20 @@ defmodule GameServer.Command do
     }
   end
 
+  def set_users_state(users, id) do
+    {:ok, json} = JSON.encode(%{users: users})
+    %Message{
+      playerId: id,
+      networkName: "UsersInitializer",
+      payload: json
+    }
+  end
+
   def add_user(id, name) do
     %Message{playerId: id, networkName: "UserInserter", payload: name}
+  end
+
+  def update_score(id, score) do
+    %Message{playerId: id, networkName: "ScoreUpdater", payload: score}
   end
 end

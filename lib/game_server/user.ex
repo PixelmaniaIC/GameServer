@@ -1,3 +1,3 @@
 defmodule GameServer.User do
-  defstruct [:name, :score]
+  defstruct [:name, :score, :online]
 end

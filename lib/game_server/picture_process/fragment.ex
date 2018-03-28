@@ -2,8 +2,6 @@ defmodule PictureProcess.Fragment do
   alias PictureProcess.Color, as: Color
 
   def pixel_sum(image, range_x, range_y) do
-    IO.inspect range_x
-    IO.inspect range_y
     #y - axis
     Enum.reduce(range_x, Color.zero, fn(y, color_y) ->
       #x - axis

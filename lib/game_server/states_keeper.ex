@@ -15,9 +15,9 @@ defmodule GameServer.StatesKeeper do
     {:ok, id_counter} = GameServer.IDCounter.start_link()
     states = Map.put(states, "id_counter", id_counter)
 
-    # leaderboard
-    {:ok, leaderboard} = GameServer.UserState.start_link()
-    Map.put(states, "leaderboard", leaderboard)
+    # users_state
+    {:ok, users_state} = GameServer.UserState.start_link()
+    Map.put(states, "users_state", users_state)
   end
 
   def id_counter(states), do: Map.get(states, "id_counter")
@@ -26,5 +26,5 @@ defmodule GameServer.StatesKeeper do
 
   def clients_pid(states), do: Map.get(states, "clients_pid")
 
-  def leaderboard(states), do: Map.get(states, "leaderboard")
+  def users_state(states), do: Map.get(states, "users_state")
 end

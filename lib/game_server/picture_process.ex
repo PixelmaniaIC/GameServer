@@ -29,11 +29,13 @@ defmodule PictureProcess do
       index + 1
     end)
 
+    IO.puts "Image received"
+
     changed_colors
   end
 
   def get_url do
-    to_string(image_url)
+    to_string(image_url())
   end
 
   def image_url do

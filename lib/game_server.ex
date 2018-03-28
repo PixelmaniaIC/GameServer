@@ -26,18 +26,24 @@ defmodule GameServer do
 
     init_commands = []
     # WILL DELETE: GIVE ID TO USER
-    message = GameServer.Command.set_id(id)
-    {:ok, set_id} = JSON.encode(message);
+    {:ok, set_id} = GameServer.Command.set_id(id) |> JSON.encode();
     init_commands = List.insert_at(init_commands, -1, set_id)
 
-    # WILL DELETE: ADD USER TO LEADERBOARD
-    #StatesKeeper.leaderboard(states)
-    #|> GameServer.UserState.new_player(id)
+    # WILL DELETE: INIT EXISTING USERS
+    # Надо придумать что делать с пользоватем
+    {:ok, all_users} =
+      StatesKeeper.users_state(states)
+      |> GameServer.UserState.get_all()
+      |> Enum.map(fn({id, user}) ->
+        %{id: id, name: user.name, score: user.score, online: user.online} end)
+      |> GameServer.Command.set_users_state(id)
+      |> JSON.encode
+    init_commands = List.insert_at(init_commands, -1, all_users)
 
     # WILL DELETE: GIVE URL TO USER
-    url = PictureProcess.get_url
     {:ok, set_img_url} =
-      GameServer.Command.image_url(url, id)
+      PictureProcess.get_url
+      |> GameServer.Command.image_url(id)
       |> JSON.encode
 
     init_commands = List.insert_at(init_commands, -1, set_img_url)
@@ -63,8 +69,6 @@ defmodule GameServer do
   end
 
   defp serve(socket, id, states) do
-    clients_pid = StatesKeeper.clients_pid(states)
-
     case read_line(socket) do
       {:ok, data} ->
         Logger.info "#{id}. #{data}"
@@ -75,7 +79,7 @@ defmodule GameServer do
         |> GameServer.Sender.send
 
       {:error, error} ->
-         GameServer.ErrorHandler.process(socket, clients_pid, id, error)
+         GameServer.ErrorHandler.process(socket, states, id, error)
     end
 
     serve(socket, id, states)
