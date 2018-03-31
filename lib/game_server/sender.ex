@@ -21,6 +21,13 @@ defmodule GameServer.Sender do
     send_except(message, clients, id)
   end
 
+  def send({:client, message, client}) do
+    IO.puts "we are sending client message:"
+    IO.inspect message
+
+    send_to(message, client)
+  end
+
   def send_to(message, client) when is_bitstring(message) do
     :gen_tcp.send(client, "#{message}\r\n")
   end

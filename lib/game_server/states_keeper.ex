@@ -7,9 +7,15 @@ defmodule GameServer.StatesKeeper do
     {:ok, clients_pid} = GameServer.Clients.start_link()
     states = Map.put(states, "clients_pid", clients_pid)
 
+    {number_of_parts, picture_parts} = Constants.picture_side() |> PictureProcess.process()
+
     # Picture state
-    picture_state = Constants.picture_side() |> PictureProcess.process()
+    picture_state = PictureProcess.get_state(picture_parts)
     states = Map.put(states, "picture_state", picture_state)
+
+    # Current board (picture) state
+    current_picture_state = PictureProcess.get_state(picture_parts)
+    states = Map.put(states, "current_picture_state", current_picture_state)
 
     # Id counter
     {:ok, id_counter} = GameServer.IDCounter.start_link()
@@ -27,4 +33,6 @@ defmodule GameServer.StatesKeeper do
   def clients_pid(states), do: Map.get(states, "clients_pid")
 
   def users_state(states), do: Map.get(states, "users_state")
+
+  def current_picture_state(states), do: Map.get(states, "current_picture_state")
 end

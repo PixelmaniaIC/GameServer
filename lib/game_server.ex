@@ -26,7 +26,7 @@ defmodule GameServer do
 
     init_commands = []
     # WILL DELETE: GIVE ID TO USER
-    {:ok, set_id} = GameServer.Command.set_id(id) |> JSON.encode();
+    {:ok, set_id} = GameServer.Command.set_id(id) |> JSON.encode()
     init_commands = List.insert_at(init_commands, -1, set_id)
 
     # WILL DELETE: INIT EXISTING USERS
@@ -48,7 +48,7 @@ defmodule GameServer do
 
     init_commands = List.insert_at(init_commands, -1, set_img_url)
 
-    # WILL DELETE: GIVE PICTURE STATE TO USER
+    #WILL DELETE: GIVE INITIAL PICTURE STATE TO USER
     picture_state = StatesKeeper.picture_state(states)
     message =
       (0..Constants.picture_parts)
@@ -58,6 +58,7 @@ defmodule GameServer do
 
     {:ok, set_pic_parts} = JSON.encode(message)
     init_commands = List.insert_at(init_commands, -1, set_pic_parts)
+
     IO.inspect init_commands
     GameServer.Sender.send_to(init_commands, client)
 

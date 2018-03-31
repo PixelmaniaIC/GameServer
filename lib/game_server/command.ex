@@ -9,6 +9,16 @@ defmodule GameServer.Command do
     %Message{playerId: id, networkName: "UrlReceiver", payload: url}
   end
 
+  def set_changed_state(cubes, id) do
+    {:ok, json_cubes} = JSON.encode(%{cubes: cubes})
+
+    %Message{
+      playerId: id,
+      networkName: "ChangedImageInitializer",
+      payload: json_cubes
+    }
+  end
+
   def set_picture_state(cubes, id) do
     {:ok, json_cubes} = JSON.encode(%{cubes: cubes})
     %Message{

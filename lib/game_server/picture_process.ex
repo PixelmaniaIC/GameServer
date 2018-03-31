@@ -15,8 +15,6 @@ defmodule PictureProcess do
     ranges = Map.get(image, :width)
     |> Fragment.get_ranges(n)
 
-    {:ok , changed_colors} = State.start_link
-
     Enum.map(ranges, fn(range_y) ->
       Enum.map(ranges, fn(range_x) ->
           Fragment.pixel_sum(image, range_x, range_y)
@@ -24,12 +22,19 @@ defmodule PictureProcess do
       end)
     end)
     |> List.flatten
-    |> Enum.reduce(0, fn(color, index) ->
-      State.put(changed_colors, index, color)
-      index + 1
-    end)
+    |> Enum.map(fn(color) -> %PictureProcess.Color{color | status: 0} end)
+    |> Enum.reduce({0, %{}}, fn(color, {index, index_color_map}) ->
 
-    IO.puts "Image received"
+      {index + 1, Map.put(index_color_map, index, color)} 
+    end)
+  end
+
+  def get_state(color_list) do
+    {:ok , changed_colors} = State.start_link()
+
+    Enum.each(color_list, fn({index, color}) ->
+      State.put(changed_colors, index, color)
+    end)
 
     changed_colors
   end
