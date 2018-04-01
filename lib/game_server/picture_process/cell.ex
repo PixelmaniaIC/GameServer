@@ -1,5 +1,4 @@
 defmodule PictureProcess.Cell do
-  alias __MODULE__, as: Cell
   alias PictureProcess.Color, as: Color
 
   defstruct [:r, :g, :b, :a, :index]

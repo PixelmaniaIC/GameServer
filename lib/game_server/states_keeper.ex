@@ -7,7 +7,7 @@ defmodule GameServer.StatesKeeper do
     {:ok, clients_pid} = GameServer.Clients.start_link()
     states = Map.put(states, "clients_pid", clients_pid)
 
-    {number_of_parts, picture_parts} = Constants.picture_side() |> PictureProcess.process()
+    {_, picture_parts} = Constants.picture_side() |> PictureProcess.process()
 
     # Picture state
     picture_state = PictureProcess.get_state(picture_parts)
