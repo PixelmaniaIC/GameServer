@@ -49,7 +49,7 @@ defmodule GameServer.Receiver do
       (0..Constants.picture_parts)
       |> Enum.reduce([], fn(index, list) ->
         indexed = PictureProcess.State.get(picture_curr_state, index)
-        [Map.update!(indexed, :index, fn(x) -> index end) | list ] end)
+        [Map.update!(indexed, :index, fn(_) -> index end) | list ] end)
       |> Enum.filter(fn(x) -> x.status == 1 end)
       |> GameServer.Command.set_changed_state(id)
       |> JSON.encode()
