@@ -27,9 +27,19 @@ defmodule GameServer.Receiver do
 
     {:ok, update_score_message} =
       GameServer.Command.update_score(id, distance)
-      |> JSON.encode();
+      |> JSON.encode()
 
     message_list = [change_color_message, update_score_message]
+
+
+    #TODO: Please refactor
+    if PictureProcess.State.filled_cells(picture_curr_state) == (Constants.picture_parts + 1) do
+      {:ok, end_game_message} =
+        GameServer.Command.end_game()
+        |> JSON.encode()
+
+        message_list = List.insert_at(message_list, -1, end_game_message)
+    end
 
     {:stupid_broadcast, message_list, StatesKeeper.clients_pid(states)}
   end

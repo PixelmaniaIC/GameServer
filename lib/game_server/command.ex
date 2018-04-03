@@ -56,4 +56,8 @@ defmodule GameServer.Command do
   def update_score(id, score) do
     %Message{playerId: id, networkName: "ScoreUpdater", payload: score}
   end
+
+  def end_game do
+    %Message{networkName: "GameFinisher"}
+  end
 end

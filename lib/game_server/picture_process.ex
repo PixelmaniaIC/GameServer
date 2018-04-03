@@ -25,7 +25,7 @@ defmodule PictureProcess do
     |> Enum.map(fn(color) -> %PictureProcess.Color{color | status: 0} end)
     |> Enum.reduce({0, %{}}, fn(color, {index, index_color_map}) ->
 
-      {index + 1, Map.put(index_color_map, index, color)} 
+      {index + 1, Map.put(index_color_map, index, color)}
     end)
   end
 
