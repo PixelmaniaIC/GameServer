@@ -57,4 +57,8 @@ defmodule GameServer.Command do
     {:ok, json} = JSON.encode(%{score: score, index: index})
     %Message{playerId: id, networkName: "ScoreUpdater", payload: json}
   end
+
+  def end_game do
+    %Message{networkName: "GameFinisher"}
+  end
 end

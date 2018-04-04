@@ -6,13 +6,15 @@ defmodule GameServer.Sender do
   end
 
   # TODO: This solution was made because of bug in client!!!
-  def send({:stupid_broadcast, message, clients}) do
+  def send({:stupid_broadcast, message, clients, close_func}) do
     Enum.each(message, fn(x) ->
       IO.puts "we are stupidly broadcasting"
       IO.inspect message
       :timer.sleep(500)
       broadcast(x, clients)
     end)
+
+    close_func.()
   end
 
   def send({:except_sender, message, clients, id}) do

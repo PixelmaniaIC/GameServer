@@ -9,10 +9,11 @@ defmodule GameServer do
                       [:binary, packet: :line, active: false, reuseaddr: true])
 
     # Initialize states
-    states = StatesKeeper.inialize()
+    states = StatesKeeper.inialize(self())
 
     IO.inspect(states)
     Logger.info "Accepting connections on port #{port}"
+
     loop_acceptor(socket, states)
   end
 
