@@ -26,7 +26,7 @@ defmodule GameServer.Receiver do
       |> JSON.encode()
 
     {:ok, update_score_message} =
-      GameServer.Command.update_score(id, distance)
+      GameServer.Command.update_score(id, distance, index)
       |> JSON.encode();
 
     message_list = [change_color_message, update_score_message]
