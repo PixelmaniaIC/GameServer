@@ -31,6 +31,8 @@ defmodule GameServer.Receiver do
 
     message_list = [change_color_message, update_score_message]
 
+    #TODO: it is awful, but competition will be tomorrow
+    close_func = fn() -> end
 
     #TODO: Please refactor
     if PictureProcess.State.filled_cells(picture_curr_state) == (Constants.picture_parts + 1) do
@@ -38,10 +40,15 @@ defmodule GameServer.Receiver do
         GameServer.Command.end_game()
         |> JSON.encode()
 
+        StatesKeeper.game_status(states) |> GameServer.GameStatus.finish_game
+        close_func = fn() ->
+                      StatesKeeper.game_pid(states) |> Process.exit(:kill)
+                     end
+
         message_list = List.insert_at(message_list, -1, end_game_message)
     end
 
-    {:stupid_broadcast, message_list, StatesKeeper.clients_pid(states)}
+    {:stupid_broadcast, message_list, StatesKeeper.clients_pid(states), close_func}
   end
 
   def receive(%Message{playerId: id, networkName: "NameSetter", payload: name}, states) do

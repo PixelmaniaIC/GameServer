@@ -1,7 +1,7 @@
 defmodule GameServer.StatesKeeper do
   alias GameServer.Constants, as: Constants
 
-  def inialize do
+  def inialize(game_pid) do
     states = %{}
     # Clients ids
     {:ok, clients_pid} = GameServer.Clients.start_link()
@@ -23,7 +23,13 @@ defmodule GameServer.StatesKeeper do
 
     # users_state
     {:ok, users_state} = GameServer.UserState.start_link()
-    Map.put(states, "users_state", users_state)
+    states = Map.put(states, "users_state", users_state)
+
+    # status of the game
+    {:ok, game_status} = GameServer.GameStatus.start_link()
+    states = Map.put(states, "game_status", game_status)
+
+    Map.put(states, "game_pid", game_pid)
   end
 
   def id_counter(states), do: Map.get(states, "id_counter")
@@ -35,4 +41,8 @@ defmodule GameServer.StatesKeeper do
   def users_state(states), do: Map.get(states, "users_state")
 
   def current_picture_state(states), do: Map.get(states, "current_picture_state")
+
+  def game_status(states), do: Map.get(states, "game_status")
+
+  def game_pid(states), do: Map.get(states, "game_pid")
 end
