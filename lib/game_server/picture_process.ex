@@ -44,6 +44,21 @@ defmodule PictureProcess do
   end
 
   def image_url do
-    'http://res.cloudinary.com/df0xbva5c/image/upload/v1521722642/randevu.png'
+    picture_num = :rand.uniform(6) - 1
+
+    IO.puts "HERE #{picture_num}"
+
+    Enum.at(available_urls, picture_num)
+  end
+
+  defp available_urls do
+    [
+      'https://res.cloudinary.com/df0xbva5c/image/upload/v1522958318/6.png',
+      'https://res.cloudinary.com/df0xbva5c/image/upload/v1522687912/5.png',
+      'https://res.cloudinary.com/df0xbva5c/image/upload/v1522958240/4.png',
+      'https://res.cloudinary.com/df0xbva5c/image/upload/v1522957952/3.png',
+      'https://res.cloudinary.com/df0xbva5c/image/upload/v1522957233/2.png',
+      'https://res.cloudinary.com/df0xbva5c/image/upload/v1522952498/1.png'
+    ]
   end
 end
