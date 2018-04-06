@@ -44,11 +44,12 @@ defmodule PictureProcess do
   end
 
   def image_url do
-    picture_num = :rand.uniform(6) - 1
+    #picture_num = :rand.uniform(6) - 1
 
-    IO.puts "HERE #{picture_num}"
+    #IO.puts "HERE #{picture_num}"
 
-    Enum.at(available_urls, picture_num)
+    #Enum.at(available_urls, picture_num)
+    'https://res.cloudinary.com/df0xbva5c/image/upload/v1522958318/6.png'
   end
 
   defp available_urls do
