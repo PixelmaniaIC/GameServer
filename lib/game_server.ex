@@ -61,7 +61,11 @@ defmodule GameServer do
     init_commands = List.insert_at(init_commands, -1, set_pic_parts)
 
     IO.inspect init_commands
-    GameServer.Sender.send_to(init_commands, client)
+
+    Enum.each(init_commands, fn(mess) ->
+      :timer.sleep(500)
+      GameServer.Sender.send_to(mess, client)
+    end)
 
     {:ok, pid} = Task.Supervisor.start_child(GameServer.TaskSupervisor,
                                               fn -> serve(client, id, states) end)
