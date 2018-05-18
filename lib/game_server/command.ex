@@ -9,7 +9,7 @@ defmodule GameServer.Command do
     {:ok, json} = JSON.encode(%{url: url,
                                 title: "Avengers III",
                                 description: "For the first time in Marvel Cinematic Universe history, Bruce Banner actually communicates directly with the Hulk.\n\nThis is the nineteenth film released by Marvel Studios in the Marvel Cinematic Universe.
-", refLink: "https://www.youtube.com/watch?v=dQw4w9WgXcQ"})
+", refLink: "https://www.youtube.com/watch?v=QwievZ1Tx-8"})
     %Message{playerId: id, networkName: "UrlReceiver", payload: json}
   end
 
