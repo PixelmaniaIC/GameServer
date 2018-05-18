@@ -50,8 +50,8 @@ defmodule PictureProcess do
     #IO.puts "HERE #{picture_num}"
 
     #Enum.at(available_urls, picture_num)
-    #'http://res.cloudinary.com/df0xbva5c/image/upload/v1526486720/aver.png'
-    'https://res.cloudinary.com/df0xbva5c/image/upload/v1522952498/1.png'
+    'http://res.cloudinary.com/df0xbva5c/image/upload/v1526486720/aver.png'
+    #'https://res.cloudinary.com/df0xbva5c/image/upload/v1522952498/1.png'
   end
 
   defp available_urls do
