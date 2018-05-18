@@ -51,7 +51,7 @@ defmodule PictureProcess do
 
     #Enum.at(available_urls, picture_num)
     #'http://res.cloudinary.com/df0xbva5c/image/upload/v1526486720/aver.png'
-    'https://res.cloudinary.com/df0xbva5c/image/upload/v1522952498/1.png'
+    'https://res.cloudinary.com/df0xbva5c/image/upload/v1522957233/2.png'
   end
 
   defp available_urls do

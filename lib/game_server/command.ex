@@ -7,9 +7,9 @@ defmodule GameServer.Command do
 
   def image_url(url, id) do
     {:ok, json} = JSON.encode(%{url: url,
-                                title: "Avengers III",
-                                description: "For the first time in Marvel Cinematic Universe history, Bruce Banner actually communicates directly with the Hulk.\n\nThis is the nineteenth film released by Marvel Studios in the Marvel Cinematic Universe.
-", refLink: "https://www.youtube.com/watch?v=dQw4w9WgXcQ"})
+                                title: "Woman with a Beret",
+                                description: "Author is Pablo Picasso\n\nA Petite $69 Million Picasso Leads Sotheby’s Solid $189 Million Impressionist Sale in London.",
+                                refLink: "https://news.artnet.com/market/picasso-sothebys-impressionist-modern-sale-london-1233899"})
     %Message{playerId: id, networkName: "UrlReceiver", payload: json}
   end
 
