@@ -1,11 +1,16 @@
-
 defmodule PictureProcess do
+  @moduledoc """
+  Module provives functions for downloading the image
+  and preparing it for the game
+  """
+
   alias PictureProcess.Fragment, as: Fragment
   alias PictureProcess.State, as: State
 
-  # TODO: rewrite, this function do many actions
+  @doc """
+  Downloads image and divide it into segments
+  """
   def process(n) do
-
     Application.ensure_all_started :inets
 
     {:ok, resp} = :httpc.request(:get, {image_url(), []}, [], [body_format: :binary])
@@ -30,6 +35,9 @@ defmodule PictureProcess do
     end)
   end
 
+  @doc """
+  Creates special state for all cells
+  """
   def get_state(color_list) do
     {:ok , changed_colors} = State.start_link()
 
@@ -40,20 +48,26 @@ defmodule PictureProcess do
     changed_colors
   end
 
+  @doc """
+  Returns url to image
+  """
   def get_url do
     to_string(image_url())
   end
 
+  @doc """
+  Chooses one random url from `available_urls`
+  """
   def image_url do
-    #picture_num = :rand.uniform(6) - 1
+    picture_num = :rand.uniform(6) - 1
 
-    #IO.puts "HERE #{picture_num}"
-
-    #Enum.at(available_urls, picture_num)
-    'http://res.cloudinary.com/df0xbva5c/image/upload/v1526486720/aver.png'
-    #'https://res.cloudinary.com/df0xbva5c/image/upload/v1522952498/1.png'
+    Enum.at(available_urls, picture_num)
   end
 
+  @doc """
+  Returns list of all urls of images
+  """
+  #TODO: replace, when http-server will be ready
   defp available_urls do
     [
       'https://res.cloudinary.com/df0xbva5c/image/upload/v1522958318/6.png',
