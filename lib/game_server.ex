@@ -37,7 +37,7 @@ defmodule GameServer do
       |> GameServer.UserState.get_all()
       |> Enum.map(fn({id, user}) ->
         %{id: id, name: user.name, score: user.score, online: user.online} end)
-      |> GameServer.Command.set_users_state(id)
+      |> GameServer.Command.users_state(id)
       |> JSON.encode
     init_commands = List.insert_at(init_commands, -1, all_users)
 
@@ -55,7 +55,7 @@ defmodule GameServer do
       (0..Constants.picture_parts)
       |> Enum.reduce([], fn(index, list) ->
         [PictureProcess.State.get(picture_state, index) | list ] end)
-      |> GameServer.Command.set_picture_state(id)
+      |> GameServer.Command.initial_state(id)
 
     {:ok, set_pic_parts} = JSON.encode(message)
     init_commands = List.insert_at(init_commands, -1, set_pic_parts)

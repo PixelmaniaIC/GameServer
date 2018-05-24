@@ -68,7 +68,7 @@ defmodule GameServer.Receiver do
         indexed = PictureProcess.State.get(picture_curr_state, index)
         [Map.update!(indexed, :index, fn(_) -> index end) | list ] end)
       |> Enum.filter(fn(x) -> x.status == 1 end)
-      |> GameServer.Command.set_changed_state(id)
+      |> GameServer.Command.changed_state(id)
       |> JSON.encode()
 
     client = StatesKeeper.clients_pid(states) |> GameServer.Clients.get(id)
