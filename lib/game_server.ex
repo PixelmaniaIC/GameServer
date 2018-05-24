@@ -1,14 +1,20 @@
 defmodule GameServer do
+  @moduledoc """
+  Module that manages with tcp-connections
+  """
+
   require Logger
 
   alias GameServer.Constants, as: Constants
   alias GameServer.StatesKeeper, as: StatesKeeper
 
+  @doc """
+  Opens `port` for tcp-connections
+  """
   def accept(port) do
     {:ok, socket} = :gen_tcp.listen(port,
                       [:binary, packet: :line, active: false, reuseaddr: true])
 
-    # Initialize states
     states = StatesKeeper.inialize(self())
 
     Logger.info "Accepting connections on port #{port}"
@@ -16,6 +22,10 @@ defmodule GameServer do
     loop_acceptor(socket, states)
   end
 
+  @doc """
+  Establishes new connection. Generate id for this connection
+  and sends current state of game to this client.
+  """
   defp loop_acceptor(socket, states) do
     {:ok, client} = :gen_tcp.accept(socket)
 
@@ -25,12 +35,12 @@ defmodule GameServer do
     Logger.info "new connection with #{id}"
 
     init_commands = []
-    # WILL DELETE: GIVE ID TO USER
+
+    # giving id to user
     {:ok, set_id} = GameServer.Command.set_id(id) |> JSON.encode()
     init_commands = List.insert_at(init_commands, -1, set_id)
 
-    # WILL DELETE: INIT EXISTING USERS
-    # Надо придумать что делать с пользоватем
+    # all new users
     {:ok, all_users} =
       StatesKeeper.users_state(states)
       |> GameServer.UserState.get_all()
@@ -40,7 +50,7 @@ defmodule GameServer do
       |> JSON.encode
     init_commands = List.insert_at(init_commands, -1, all_users)
 
-    # WILL DELETE: GIVE URL TO USER
+    # giving url to user
     {:ok, set_img_url} =
       PictureProcess.get_url
       |> GameServer.Command.image_url(id)
@@ -48,7 +58,7 @@ defmodule GameServer do
 
     init_commands = List.insert_at(init_commands, -1, set_img_url)
 
-    #WILL DELETE: GIVE INITIAL PICTURE STATE TO USER
+    # giving initial state to user
     picture_state = StatesKeeper.picture_state(states)
     message =
       (0..Constants.picture_parts)
@@ -73,6 +83,9 @@ defmodule GameServer do
     loop_acceptor(socket, states)
   end
 
+  @doc """
+  Reads commands from client and reacts to them.
+  """
   defp serve(socket, id, states) do
     case read_line(socket) do
       {:ok, data} ->
@@ -90,6 +103,9 @@ defmodule GameServer do
     serve(socket, id, states)
   end
 
+  @doc """
+  Reads stream data from the socket
+  """
   defp read_line(socket) do
     :gen_tcp.recv(socket, 0)
   end

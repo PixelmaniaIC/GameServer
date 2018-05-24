@@ -29,7 +29,7 @@ defmodule PictureProcess.State do
   Returns count of filled cells in the image
   """
   def filled_cells(bucket) do
-    Agent.get(bucket, fn(x) -> Enum.filter(x, fn({k, v}) -> v.status == 1 end)
+    Agent.get(bucket, fn(x) -> Enum.filter(x, fn({_k, v}) -> v.status == 1 end)
                                |> Enum.count
                       end)
   end

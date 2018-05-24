@@ -1,8 +1,16 @@
 defmodule GameServer.Receiver do
+  @moduledoc """
+  Functions that handles messages from clients
+  """
+
   alias GameServer.Message, as: Message
   alias GameServer.StatesKeeper, as: StatesKeeper
   alias GameServer.Constants, as: Constants
 
+  @doc """
+  Handles message from the ColorChanger. Updates game area, points of user.
+  Also, if game all cells are filled, returns command to finish the game.
+  """
   def receive(%Message{playerId: id, networkName: "ColorChanger", payload: payload}, states) do
     %PictureProcess.Cell{r: r, g: g, b: b, a: a, index: index} =
       Poison.decode!(payload, as: %PictureProcess.Cell{})
@@ -31,26 +39,28 @@ defmodule GameServer.Receiver do
 
     message_list = [change_color_message, update_score_message]
 
-    #TODO: it is awful, but competition will be tomorrow
     close_func = fn() -> end
 
-    #TODO: Please refactor
     if PictureProcess.State.filled_cells(picture_curr_state) == (Constants.picture_parts + 1) do
       {:ok, end_game_message} =
         GameServer.Command.end_game()
         |> JSON.encode()
 
-        StatesKeeper.game_status(states) |> GameServer.GameStatus.finish_game
-        close_func = fn() ->
-                      StatesKeeper.game_pid(states) |> Process.exit(:kill)
-                     end
+      StatesKeeper.game_status(states) |> GameServer.GameStatus.finish_game
+      close_func = fn() ->
+        StatesKeeper.game_pid(states) |> Process.exit(:kill)
+      end
 
-        message_list = List.insert_at(message_list, -1, end_game_message)
+      message_list = List.insert_at(message_list, -1, end_game_message)
     end
 
-    {:stupid_broadcast, message_list, StatesKeeper.clients_pid(states), close_func}
+    {:timer_commands, message_list, StatesKeeper.clients_pid(states), close_func}
   end
 
+  @doc """
+  Handles message from the NameSetter. Receives name of new user.
+  Writes it to the state. Returns command to add new user to other clients.
+  """
   def receive(%Message{playerId: id, networkName: "NameSetter", payload: name}, states) do
     StatesKeeper.users_state(states)
     |> GameServer.UserState.new_player(id, name)
@@ -59,6 +69,11 @@ defmodule GameServer.Receiver do
     {:except_sender, json_message, StatesKeeper.clients_pid(states), id}
   end
 
+  @doc """
+  Handles message from the ImageDownloaded. Receives notification that user
+  downloaded the picture.
+  Returns command to user to load current state of picure.
+  """
   def receive(%Message{playerId: id, networkName: "ImageDownloaded", payload: _}, states) do
     picture_curr_state = StatesKeeper.current_picture_state(states)
     {:ok, message} =

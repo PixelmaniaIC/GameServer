@@ -61,7 +61,7 @@ defmodule PictureProcess do
   def image_url do
     picture_num = :rand.uniform(6) - 1
 
-    Enum.at(available_urls, picture_num)
+    Enum.at(available_urls(), picture_num)
   end
 
   @doc """
