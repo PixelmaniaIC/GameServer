@@ -25,7 +25,8 @@ defmodule GameServer.MixProject do
       {:json, "~> 1.0"},
       {:poison, "~> 3.1"},
       {:egd, github: "erlang/egd"},
-      {:ex_png, git: "https://github.com/xavier/ex_png.git"}
+      {:ex_png, git: "https://github.com/xavier/ex_png.git"},
+      {:ex_doc, "~> 0.18", only: :dev, runtime: false}
     ]
   end
 end
