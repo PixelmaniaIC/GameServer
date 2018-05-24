@@ -11,7 +11,7 @@ mix deps.get
 ```shell
 mix run --no-halt
 ```
-
+ 
 ##### In background:
 ```shell
 elixir --detached -S mix run --no-halt
