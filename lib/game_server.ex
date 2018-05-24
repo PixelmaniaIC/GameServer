@@ -11,7 +11,6 @@ defmodule GameServer do
     # Initialize states
     states = StatesKeeper.inialize(self())
 
-    IO.inspect(states)
     Logger.info "Accepting connections on port #{port}"
 
     loop_acceptor(socket, states)

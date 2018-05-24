@@ -1,10 +1,16 @@
 defmodule GameServer.ErrorHandler do
+  @moduledoc """
+  This module implements functions that handle errors connected to network
+  """
+
   require Logger
 
   alias GameServer.StatesKeeper, as: StatesKeeper
   alias GameServer.UserState, as: UserState
 
-  # TODO: надо ставить пользователю статус неактивен
+  @doc """
+  Update users status to offline and closes socket connection
+  """
   def process(_socket, states, id, :enotconn) do
     Logger.info "Error exit"
 
@@ -12,10 +18,12 @@ defmodule GameServer.ErrorHandler do
     clear_user_info(states, id)
     IO.inspect StatesKeeper.users_state(states) |> UserState.get_all
 
-
     exit(:shutdown)
   end
 
+  @doc """
+  Update users status to offline and closes socket connection
+  """
   def process(_socket, states, id, :closed) do
     Logger.info "Player exit"
     IO.inspect StatesKeeper.users_state(states) |> UserState.get_all
@@ -28,6 +36,9 @@ defmodule GameServer.ErrorHandler do
     exit(:shutdown)
   end
 
+  @doc """
+  Sets user's status to offline
+  """
   defp clear_user_info(states, id) do
     StatesKeeper.clients_pid(states) |> GameServer.Clients.delete(id)
 
