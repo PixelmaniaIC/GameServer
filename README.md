@@ -1,21 +1,16 @@
-# GameServer
+# Pixelmania GameServer
 
-**TODO: Add description**
+**TODO: TCP-server for Pixelmania game. It provides connection between players during the game session**
 
-## Installation
+## How to launch
+mix deps.get
 
-If [available in Hex](https://hex.pm/docs/publish), the package can be installed
-by adding `game_server` to your list of dependencies in `mix.exs`:
-
-```elixir
-def deps do
-  [
-    {:game_server, "~> 0.1.0"}
-  ]
-end
+##### In console:
+```shell
+mix run --no-halt
 ```
 
-Documentation can be generated with [ExDoc](https://github.com/elixir-lang/ex_doc)
-and published on [HexDocs](https://hexdocs.pm). Once published, the docs can
-be found at [https://hexdocs.pm/game_server](https://hexdocs.pm/game_server).
-
+##### In background:
+```shell
+elixir --detached -S mix run --no-halt
+```
