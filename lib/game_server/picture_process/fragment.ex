@@ -1,6 +1,13 @@
 defmodule PictureProcess.Fragment do
+  @moduledoc """
+  Module that provides functions to divide image to cells
+  """
+
   alias PictureProcess.Color, as: Color
 
+  @doc """
+  Devides image into segments and returns sum of each segment
+  """
   def pixel_sum(image, range_x, range_y) do
     #y - axis
     Enum.reduce(range_x, Color.zero, fn(y, color_y) ->
@@ -28,6 +35,9 @@ defmodule PictureProcess.Fragment do
     end)
   end
 
+  @doc """
+  Returns average value of chosen segment
+  """
   def get_average(color, first..last) do
     diff = last - first + 1
     diviser = :math.pow(diff, 2) |> round
@@ -40,6 +50,9 @@ defmodule PictureProcess.Fragment do
     }
   end
 
+  @doc """
+  Returns average value of chosen segment
+  """
   def get_ranges(w, n) do
     parts = div(w, n)
 
@@ -47,6 +60,9 @@ defmodule PictureProcess.Fragment do
     |> Enum.reverse
   end
 
+  @doc """
+  Returns sum of particular key in `map1` and `map2`
+  """
   defp sum_color(atom, map1, map2) do
     Map.get(map1, atom) + Map.get(map2, atom)
   end

@@ -60,7 +60,6 @@ defmodule GameServer.Receiver do
   end
 
   def receive(%Message{playerId: id, networkName: "ImageDownloaded", payload: _}, states) do
-
     picture_curr_state = StatesKeeper.current_picture_state(states)
     {:ok, message} =
       (0..Constants.picture_parts)
